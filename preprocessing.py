@@ -76,12 +76,15 @@ keyword = 'dengue outbreak'
 df=ts.TwitterSearchScraper(keyword,count).getSearchDataFrame()
 
 #generate vocab
+print('generating vocab')
 vocab_word_to_num,vocab_num_to_vector = getVocab('glove.twitter.27B.100d.txt',100)
 tweets=df['content'].values
 
 #cleaning of tweets
+print('cleaning tweets...')
 processed_tweets=[]
 for i in range(len(tweets)):
+    print('tweet',i+1)
     tweet=tweets[i]
     words=tweet.split()
     processed_words=[]
@@ -91,12 +94,14 @@ for i in range(len(tweets)):
             processed_words.append(words[j])
     tweet=' '.join(processed_words)
     tweet=decontracted(tweet)
-    print(tweet)
+    #print(tweet)
     processed_tweets.append(tweet)
 
 #replacing unknown words
+print('replacing unknowns...')
 processed_tweets_final=[]
 for i in range(len(processed_tweets)):
+    print('tweet',i+1)
     tweet=processed_tweets[i]
     words=tweet.split()
     processed_words=[]
@@ -106,15 +111,16 @@ for i in range(len(processed_tweets)):
         else:
             processed_words.append(word)
     tweet=' '.join(processed_words)
-    print(tweet)
+    #print(tweet)
     processed_tweets_final.append(tweet)
 
 #tokenizing tweets
+print('tokeninzing...')
 tokenized_tweets=tokenize(processed_tweets_final,vocab_word_to_num,100)
 
 #Uncomment below line to see tokenized tweets
 #print(tokenized_tweets)
-
+print('done')
 df1 = pd.DataFrame(list(zip(processed_tweets_final, tokenized_tweets)), columns =['ProceesedTweets', 'TokenizedTweets'])
 print(df1)
 
