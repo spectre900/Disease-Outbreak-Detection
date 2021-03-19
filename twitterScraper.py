@@ -107,10 +107,11 @@ class TwitterSearchScraper(TwitterAPIScraper):
 
 	def getSearchDataFrame(self):
 		tweetGenerator = self.getItems()
-		tweets = {'dateTime': [], 'content': []}
+		tweets = {'dateTime': [], 'content': [],'y':[]}
 		while(self.count):
 			tweet = next(tweetGenerator)
 			tweets['dateTime'].append(tweet.dateTime)
 			tweets['content'].append(tweet.content)
+			tweets['y'].append(0)
 			self.count-=1
 		return pandas.DataFrame(tweets)
