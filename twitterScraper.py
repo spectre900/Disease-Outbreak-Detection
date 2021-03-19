@@ -83,7 +83,7 @@ class TwitterAPIScraper(Scraper):
 					yield self.toTweet(tweet, obj)
 
 	def toTweet(self, tweet, obj):
-		content = tweet['full_text']
+		content = re.sub('\\n',' ',tweet['full_text'])
 		dateTime = email.utils.parsedate_to_datetime(tweet['created_at'])
 		return Tweet(content,dateTime)
 
