@@ -14,6 +14,7 @@ from tensorflow.keras import regularizers
 from tensorflow.keras.layers import Input
 from tensorflow.keras.layers import LSTM
 from tensorflow.keras.layers import Dense
+from tensorflow.keras.layers import Dropout
 from tensorflow.keras.layers import Embedding
 from tensorflow.keras.layers import LayerNormalization
 from tensorflow.keras.layers import BatchNormalization
@@ -21,12 +22,13 @@ from tensorflow.keras.layers import BatchNormalization
 from tensorflow.keras.metrics import TruePositives
 from tensorflow.keras.metrics import TrueNegatives
 
-EPOCHS = 10
+EPOCHS = 15
 MAX_LEN = 100
-LSTM_DIM = 300
-DENSE_DIM = 100
+LSTM_DIM = 100
+DENSE_DIM = 50
 BATCH_SIZE = 16
 VECTOR_DIM = 50
+VALID_SPLIT = 0.25
 
 def getData():
     tweets = np.load('processed/tokenized_tweets.npy')
@@ -57,10 +59,15 @@ def getModel(embed_matrix):
                         mask_zero = True,
                         trainable = False))
     model.add(BatchNormalization())
-    model.add(LSTM(LSTM_DIM))
+    model.add(Dropout(0.2))
+    model.add(LSTM(LSTM_DIM, recurrent_dropout=0.2))
+    model.add(BatchNormalization())
+    model.add(Dropout(0.2))
     model.add(Dense(DENSE_DIM))
+    model.add(BatchNormalization())
+    model.add(Dropout(0.2))
     model.add(Dense(1, activation='sigmoid'))
-    model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy', TruePositives(), TrueNegatives()])
+    model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
     
     return model
 
@@ -78,6 +85,6 @@ def trainModel():
     x = tweets
     y = category
     
-    history = model.fit(x, y, epochs=EPOCHS, batch_size=BATCH_SIZE)
+    history = model.fit(x, y, epochs=EPOCHS, batch_size=BATCH_SIZE, validation_split=VALID_SPLIT, shuffle=True)
 
 trainModel()
