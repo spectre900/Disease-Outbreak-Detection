@@ -6,20 +6,21 @@ import time
 import numpy as np
 import pandas as pd
 import pickle as pkl
-import matplotlib.pyplot as plt
 import tensorflow.keras.backend as K
 
 from tensorflow.keras import regularizers
-from tensorflow.keras.layers import Dense
+from tensorflow.keras.layers import Input
 from tensorflow.keras.layers import LSTM
-from tensorflow.keras.layers import Dropout
-from tensorflow.keras.layers import Embedding
+from tensorflow.keras.layers import Dense
 from tensorflow.keras.models import Sequential
 
 EPOCHS = 10
 MAX_LEN = 100
-BATCH_SIZE = 128
-TRAIN_RATIO = 0.85
+LSTM_DIM = 100
+DENSE_DIM = 50
+BATCH_SIZE = 16
+VECTOR_DIM = 50
+VALID_SPLIT = 0.15
 
 def getData():
     tweets = np.load('processed/tokenized_tweets.npy')
@@ -27,70 +28,41 @@ def getData():
     return tweets, category
 
 def getDict():
-    wordToNum = {}
-    numToVector = {}
-    return wordToNum,numToVector
+    numToVector = pkl.load(open('processed/num_to_vec.pkl','rb'))
+    return numToVector
 
-def tokenize(tweets,wordToNum):
+def tokenToVec(tweets, numToVector):
     
-    tokenizedTweets = np.zeros((len(tweets),MAX_LEN),dtype='int')
-    
+    x = np.zeros((len(tweets), MAX_LEN, VECTOR_DIM))
+
     for i in range(len(tweets)):
-        tweet = tweets[i]
-        tweet = tweet.split()
-        for j in range(len(tweet)):
-            tokenizedTweets[i][j] = wordToNum[tweet[j]]
-        
-    return tokenizedTweets
+        for j in range(MAX_LEN):
+            x[i][j] = numToVector[tweets[i][j]]
 
-def loadEmbdMatrix(numToVector):
+    return x
 
-    dModel = len(numToVector[0])
-    vocabSize = len(numToVector)
-    
-    embdMatrix = np.zeros((vocabSize,dModel))
-    
-    for i in range(vocabSize):
-        embdMatrix[i] = numToVector[i]
-        
-    return embdMatrix
-
-def getModel(embdMatrix): 
-
-    dModel = len(embdMatrix[0])
-    vocabSize = len(embdMatrix)
+def getModel(): 
 
     model = Sequential()
-    model.add(Embedding(vocabSize,dModel,weights=[embdMatrix],input_length=MAX_LEN,trainable=True,mask_zero=True))
-    model.add(LSTM(dModel))
-    model.add(Dense(dModel, activation='relu',kernel_regularizer=regularizers.l1_l2(l1=2e-5, l2=2e-4),bias_regularizer=regularizers.l2(2e-4),activity_regularizer=regularizers.l2(2e-5)))
-    model.add(Dropout(0.5))
+    model.add(Input(shape=(MAX_LEN, VECTOR_DIM)))
+    model.add(LSTM(LSTM_DIM))
+    model.add(Dense(DENSE_DIM))
     model.add(Dense(1, activation='sigmoid'))
     model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
-    
-    print(model.summary())
     
     return model
 
 def trainModel():
-    tweets, category       = getData()
-    wordToNum, numToVector = getDict()
+    tweets, category = getData()
+    numToVector = getDict()
 
-    tweets      = tokenize(tweets,wordToNum)
-    embdMatrix  = loadEmbdMatrix(numToVector)
-    model       = getModel(embdMatrix)
-    
-    trainLength = (int)(len(tweets)*TRAIN_RATIO)
-    xTrain      = tweets[:trainLength,:]
-    xTest       = tweets[trainLength:,:]
-    yTrain      = category[:trainLength:,:]
-    yTest       = category[trainLength:,:]
-    
-    history     = model.fit(xTrain, yTrain, validation_data=(xTest, yTest), epochs=EPOCHS, batch_size=BATCH_SIZE)
-    
-    return model,history
+    model = getModel()
 
-x, y = getData()
+    print(model.summary())
 
-print(' X shape : ',x.shape)
-print(' Y shape : ',y.shape)
+    x = tokenToVec(tweets, numToVector)
+    y = category
+    
+    history = model.fit(x, y, epochs=EPOCHS, batch_size=BATCH_SIZE, validation_split=VALID_SPLIT)
+
+trainModel()
