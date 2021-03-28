@@ -10,22 +10,20 @@ import matplotlib.pyplot as plt
 import tensorflow.keras.backend as K
 
 from tensorflow.keras import regularizers
-from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense
 from tensorflow.keras.layers import LSTM
-from tensorflow.keras.layers import Embedding
 from tensorflow.keras.layers import Dropout
-from tensorflow.keras.layers import Layer
-from tensorflow.keras.layers import RNN
+from tensorflow.keras.layers import Embedding
+from tensorflow.keras.models import Sequential
 
 EPOCHS = 10
 MAX_LEN = 100
 BATCH_SIZE = 128
-TRAIN_RATIO = 0.9
+TRAIN_RATIO = 0.85
 
 def getData():
-    tweets = np.array([])
-    category = np.array([])
+    tweets = np.load('processed/tokenized_tweets.npy')
+    category = pd.read_csv('data_annot.csv')['y'].values.reshape(-1,1)
     return tweets, category
 
 def getDict():
@@ -92,23 +90,7 @@ def trainModel():
     
     return model,history
 
-def plot(history):
-    
-    plt.plot(history.history['accuracy'])
-    plt.plot(history.history['val_accuracy'])
-    plt.title('model accuracy and loss')
-    plt.ylabel('accuracy')
-    plt.xlabel('epoch')
-    plt.legend(['train', 'validation'], loc='upper left')
-    plt.show()
+x, y = getData()
 
-    plt.plot(history.history['loss'])
-    plt.plot(history.history['val_loss'])
-    plt.title('model loss')
-    plt.ylabel('loss')
-    plt.xlabel('epoch')
-    plt.legend(['train', 'validation'], loc='upper left')
-    plt.show()
-
-model,history = trainModel()
-plot(history)
+print(' X shape : ',x.shape)
+print(' Y shape : ',y.shape)

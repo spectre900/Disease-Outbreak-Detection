@@ -37,7 +37,7 @@ def tokenize(reviews,vocab_word_to_num,max_len): # tokenizing the tweets
         for j in range(len(review)):
             tokenized_reviews[i][j] = vocab_word_to_num[review[j]]    
         
-    return tokenized_reviews
+    return np.array(tokenized_reviews)
 
 
 def decontracted(phrase):
@@ -120,14 +120,11 @@ for i in range(len(processed_tweets)):
 print('tokeninzing...')
 tokenized_tweets=tokenize(processed_tweets_final,vocab_word_to_num,100)
 
-#Uncomment below line to see tokenized tweets
-df = pd.DataFrame(list(zip(processed_tweets_final, tokenized_tweets)), columns =['ProcessedTweets', 'TokenizedTweets'])
-
 try:
     os.makedirs('processed/')
 except FileExistsError:
     pass
 
 print('Saving...')
-df.to_csv('processed/processed_data.csv')
+np.save('processed/tokenized_tweets.npy', tokenized_tweets)
 pkl.dump(vocab_num_to_vector,open('processed/num_to_vec.pkl','wb'))
