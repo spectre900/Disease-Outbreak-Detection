@@ -89,7 +89,7 @@ for i in range(len(tweets)):
     words=tweet.split()
     processed_words=[]
     for j in range(len(words)):
-        if words[j][0]!='@' and words[j][0]!="#" and words[j][0:4]!="http":
+        if words[j][0]!='@' and words[j][0:4]!="http":
             words[j]=words[j].lower()
             processed_words.append(words[j])
     tweet=' '.join(processed_words)
