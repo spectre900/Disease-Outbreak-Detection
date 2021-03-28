@@ -1,8 +1,9 @@
 import re
+import os
 import numpy as np
 import pandas as pd
+import pickle as pkl
 import zipfile as unzip
-from gensim.models import KeyedVectors
 
 def getVocab(filename,d_model): # to generate word-num-vector mapping using pre trained word vectors
     
@@ -72,13 +73,15 @@ def decontracted(phrase):
     return phrase
 
 #Unzip Word2Vec
+print('Unzipping Word2Vec...')
 unzip.ZipFile('Word2Vec/glove6b50dtxt.zip', 'r').extractall('Word2Vec')
 
 #read CSV
+print('Reading CSV...')
 df = pd.read_csv('data_annot.csv')
 
 #generate vocab
-print('generating vocab')
+print('generating vocab...')
 vocab_word_to_num,vocab_num_to_vector = getVocab('Word2Vec/glove.6B.50d.txt',50)
 tweets=df['content'].values
 
@@ -86,7 +89,6 @@ tweets=df['content'].values
 print('cleaning tweets...')
 processed_tweets=[]
 for i in range(len(tweets)):
-    print('tweet',i+1)
     tweet=tweets[i]
     words=tweet.split()
     processed_words=[]
@@ -96,14 +98,12 @@ for i in range(len(tweets)):
             processed_words.append(words[j])
     tweet=' '.join(processed_words)
     tweet=decontracted(tweet)
-    #print(tweet)
     processed_tweets.append(tweet)
 
 #replacing unknown words
 print('replacing unknowns...')
 processed_tweets_final=[]
 for i in range(len(processed_tweets)):
-    print('tweet',i+1)
     tweet=processed_tweets[i]
     words=tweet.split()
     processed_words=[]
@@ -121,10 +121,13 @@ print('tokeninzing...')
 tokenized_tweets=tokenize(processed_tweets_final,vocab_word_to_num,100)
 
 #Uncomment below line to see tokenized tweets
-#print(tokenized_tweets)
-print('done')
-df1 = pd.DataFrame(list(zip(processed_tweets_final, tokenized_tweets)), columns =['ProceesedTweets', 'TokenizedTweets'])
-print(df1)
+df = pd.DataFrame(list(zip(processed_tweets_final, tokenized_tweets)), columns =['ProcessedTweets', 'TokenizedTweets'])
 
+try:
+    os.makedirs('processed/')
+except FileExistsError:
+    pass
 
-
+print('Saving...')
+df.to_csv('processed/processed_data.csv')
+pkl.dump(vocab_num_to_vector,open('processed/num_to_vec.pkl','wb'))
