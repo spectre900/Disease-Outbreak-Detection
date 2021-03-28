@@ -18,13 +18,15 @@ from tensorflow.keras.layers import Embedding
 from tensorflow.keras.layers import LayerNormalization
 from tensorflow.keras.layers import BatchNormalization
 
+from tensorflow.keras.metrics import TruePositives
+from tensorflow.keras.metrics import TrueNegatives
+
 EPOCHS = 10
 MAX_LEN = 100
-LSTM_DIM = 100
-DENSE_DIM = 50
+LSTM_DIM = 300
+DENSE_DIM = 100
 BATCH_SIZE = 16
 VECTOR_DIM = 50
-VALID_SPLIT = 0.3
 
 def getData():
     tweets = np.load('processed/tokenized_tweets.npy')
@@ -54,10 +56,11 @@ def getModel(embed_matrix):
                         input_length = MAX_LEN,
                         mask_zero = True,
                         trainable = False))
+    model.add(BatchNormalization())
     model.add(LSTM(LSTM_DIM))
     model.add(Dense(DENSE_DIM))
     model.add(Dense(1, activation='sigmoid'))
-    model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
+    model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy', TruePositives(), TrueNegatives()])
     
     return model
 
@@ -74,9 +77,7 @@ def trainModel():
 
     x = tweets
     y = category
-
-    print(x.shape, y.shape)
     
-    history = model.fit(x, y, epochs=EPOCHS, batch_size=BATCH_SIZE, validation_split=VALID_SPLIT)
+    history = model.fit(x, y, epochs=EPOCHS, batch_size=BATCH_SIZE)
 
 trainModel()
