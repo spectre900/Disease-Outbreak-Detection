@@ -1,8 +1,8 @@
-import twitterScraper as ts
-from gensim.models import KeyedVectors
-import pandas as pd
 import re
 import numpy as np
+import pandas as pd
+import zipfile as unzip
+from gensim.models import KeyedVectors
 
 def getVocab(filename,d_model): # to generate word-num-vector mapping using pre trained word vectors
     
@@ -40,6 +40,7 @@ def tokenize(reviews,vocab_word_to_num,max_len): # tokenizing the tweets
 
 
 def decontracted(phrase):
+
     # specific
     phrase = re.sub(r"won't", "will not", phrase)
     phrase = re.sub(r"can\'t", "can not", phrase)
@@ -70,14 +71,15 @@ def decontracted(phrase):
     
     return phrase
 
-#store raw tweets in dataframe
-count   = 100
-keyword = 'dengue outbreak'
-df=ts.TwitterSearchScraper(keyword,count).getSearchDataFrame()
+#Unzip Word2Vec
+unzip.ZipFile('Word2Vec/glove6b50dtxt.zip', 'r').extractall('Word2Vec')
+
+#read CSV
+df = pd.read_csv('data_annot.csv')
 
 #generate vocab
 print('generating vocab')
-vocab_word_to_num,vocab_num_to_vector = getVocab('glove.twitter.27B.100d.txt',100)
+vocab_word_to_num,vocab_num_to_vector = getVocab('Word2Vec/glove.6B.50d.txt',50)
 tweets=df['content'].values
 
 #cleaning of tweets
