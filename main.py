@@ -1,6 +1,6 @@
 import twitterScraper as ts
 
-count   = 2000
+count   = 4000
 keyword = 'dengue outbreak'
 
 df = ts.TwitterSearchScraper(keyword,count).getSearchDataFrame()
