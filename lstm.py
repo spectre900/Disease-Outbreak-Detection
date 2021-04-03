@@ -87,4 +87,6 @@ def trainModel():
     
     history = model.fit(x, y, epochs=EPOCHS, batch_size=BATCH_SIZE, validation_split=VALID_SPLIT, shuffle=True)
 
+    model.save('lstm')
+
 trainModel()
