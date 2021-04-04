@@ -1,0 +1,12 @@
+numpy
+pandas
+matplotlib
+geotext
+geopandas
+iso3166
+pygal
+cssselect
+tinycss
+cairosvg
+lxml
+tensorflow
