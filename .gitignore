@@ -1,0 +1,4 @@
+/Frontend/static/map
+/LSTM/data/processed
+/LSTM/data/Word2Vec/glove.6B.50d.txt
+/LSTM/data/model.h5
