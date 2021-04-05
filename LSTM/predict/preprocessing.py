@@ -72,17 +72,18 @@ def decontracted(phrase):
     
     return phrase
 
-# print('Unzipping Word2Vec...')
-# unzip.ZipFile('Word2Vec/glove6b50dtxt.zip', 'r').extractall('Word2Vec')
+#unzip
+print('Unzipping Word2Vec...')
+unzip.ZipFile('../data/Word2Vec/glove6b50dtxt.zip', 'r').extractall('../data/Word2Vec')
 
 #read CSV
 print('Reading CSV...')
-df = pd.read_csv('data_annot.csv')#CHANGE THIS!!!
+df = pd.read_csv('../../Scraper/data/data_annotated.csv')
 
 #generate vocab
 print('generating vocab...')
-vocab_word_to_num,vocab_num_to_vector = getVocab('Word2Vec/glove.6B.50d.txt',50)
-tweets=df['content'].values #CHANGE THIS ACCORDINLY
+vocab_word_to_num,vocab_num_to_vector = getVocab('../data/Word2Vec/glove.6B.50d.txt',50)
+tweets=df['content'].values
 
 #cleaning of tweets
 print('cleaning tweets...')
@@ -126,11 +127,10 @@ print('tokeninzing...')
 tokenized_tweets_predict=tokenize(processed_tweets_final_predict,vocab_word_to_num,100)
 
 try:
-    os.makedirs('processed/')
+    os.makedirs('../data/processed/')
 except FileExistsError:
     pass
 
 print('Saving...')
-np.save('processed/tokenized_tweets_predict.npy', tokenized_tweets_predict)
-pkl.dump(geotext_tweets_predict,open('processed/geotext_tweets_predict.pkl','wb'))
-print(geotext_tweets_predict[0])
+np.save('../data/processed/tokenized_tweets_predict.npy', tokenized_tweets_predict)
+pkl.dump(geotext_tweets_predict,open('../data/processed/geotext_tweets_predict.pkl','wb'))

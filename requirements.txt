@@ -2,11 +2,9 @@ numpy
 pandas
 matplotlib
 geotext
-iso3166
 pygal
 cssselect
 tinycss
 cairosvg
 lxml
 pygal_maps_world
-geopandas

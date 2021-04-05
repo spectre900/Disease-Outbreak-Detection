@@ -15,13 +15,13 @@ from collections import defaultdict
 
 
 def getData():
-    tweetsTokens = np.load('processed/tokenized_tweets_predict.npy')
-    tweets = pkl.load(open('processed/geotext_tweets_predict.pkl','rb'))
+    tweetsTokens = np.load('../data/processed/tokenized_tweets_predict.npy')
+    tweets = pkl.load(open('../data/processed/geotext_tweets_predict.pkl','rb'))
     return tweetsTokens, tweets
 
 def getModel():
 
-   model = keras.models.load_model('lstm')
+   model = keras.models.load_model('../data/model.h5')
    return model
 
 def getLocation(text):
@@ -33,7 +33,7 @@ def getCountryDict(tweets, predictions):
 
     for i in range(len(tweets)):
         
-        if predictions[i][0] >= 0:
+        if predictions[i][0] >= 0.5:
             
             dict = getLocation(tweets[i])
             for country in dict.keys():
@@ -49,7 +49,13 @@ def run():
     worldData = getCountryDict(tweets, predictions)
     worldMap = pygal.maps.world.World()
     worldMap.add('Dengue Outbreak', worldData)
-    worldMap.render_to_file('map.svg')
-    cairosvg.svg2svg(url='map.svg', write_to='map.svg')
+
+    try:
+        os.makedirs('../../Frontend/static/map/')
+    except FileExistsError:
+        pass
+
+    worldMap.render_to_file('../../Frontend/static/map/map.svg')
+    cairosvg.svg2svg(url='../../Frontend/static/map/map.svg', write_to='../../Frontend/static/map/map.svg')
 
 run()

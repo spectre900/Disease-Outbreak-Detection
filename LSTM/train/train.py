@@ -2,7 +2,6 @@ import warnings
 warnings.filterwarnings('ignore',category=FutureWarning)
 
 import os
-import time
 import numpy as np
 import pandas as pd
 import pickle as pkl
@@ -16,11 +15,7 @@ from tensorflow.keras.layers import LSTM
 from tensorflow.keras.layers import Dense
 from tensorflow.keras.layers import Dropout
 from tensorflow.keras.layers import Embedding
-from tensorflow.keras.layers import LayerNormalization
 from tensorflow.keras.layers import BatchNormalization
-
-from tensorflow.keras.metrics import TruePositives
-from tensorflow.keras.metrics import TrueNegatives
 
 EPOCHS = 15
 MAX_LEN = 100
@@ -28,15 +23,14 @@ LSTM_DIM = 100
 DENSE_DIM = 50
 BATCH_SIZE = 16
 VECTOR_DIM = 50
-VALID_SPLIT = 0.25
 
 def getData():
-    tweets = np.load('processed/tokenized_tweets.npy')
-    category = pd.read_csv('data_annot.csv')['y'].values.reshape(-1,1)
+    tweets = np.load('../data/processed/tokenized_tweets.npy')
+    category = pd.read_csv('../../Scraper/data/data_annotated.csv')['y'].values.reshape(-1,1)
     return tweets, category
 
 def getDict():
-    numToVector = pkl.load(open('processed/num_to_vec.pkl','rb'))
+    numToVector = pkl.load(open('../data/processed/num_to_vec.pkl','rb'))
     return numToVector
 
 def getEmbedMatrix(numToVector):
@@ -85,8 +79,8 @@ def trainModel():
     x = tweets
     y = category
     
-    history = model.fit(x, y, epochs=EPOCHS, batch_size=BATCH_SIZE, validation_split=VALID_SPLIT, shuffle=True)
+    history = model.fit(x, y, epochs=EPOCHS, batch_size=BATCH_SIZE, shuffle=True)
 
-    model.save('lstm')
+    model.save('../data/model.h5')
 
 trainModel()
