@@ -1,9 +1,18 @@
+import warnings
+warnings.filterwarnings('ignore',category=FutureWarning)
+
 import re
 import os
+import pygal
+import cairosvg
 import numpy as np
 import pandas as pd
 import pickle as pkl
 import zipfile as unzip
+from geotext import GeoText
+from tensorflow import keras
+from collections import defaultdict
+from Scraper import twitterScraper as ts
 
 def getVocab(filename,d_model): # to generate word-num-vector mapping using pre trained word vectors
     
@@ -74,15 +83,15 @@ def decontracted(phrase):
 
 #unzip
 print('Unzipping Word2Vec...')
-unzip.ZipFile('../data/Word2Vec/glove6b50dtxt.zip', 'r').extractall('../data/Word2Vec')
+unzip.ZipFile('LSTM/data/Word2Vec/glove6b50dtxt.zip', 'r').extractall('LSTM/data/Word2Vec/')
 
 #read CSV
-print('Reading CSV...')
-df = pd.read_csv('../../Scraper/data/data_annotated.csv')
+print('Getting Tweets...')
+df = ts.TwitterSearchScraper('dengue outbreak', 500).getSearchDataFrame()
 
 #generate vocab
 print('generating vocab...')
-vocab_word_to_num,vocab_num_to_vector = getVocab('../data/Word2Vec/glove.6B.50d.txt',50)
+vocab_word_to_num,vocab_num_to_vector = getVocab('LSTM/data/Word2Vec/glove.6B.50d.txt',50)
 tweets=df['content'].values
 
 #cleaning of tweets
@@ -126,11 +135,41 @@ for i in range(len(processed_tweets_predict)):
 print('tokeninzing...')
 tokenized_tweets_predict=tokenize(processed_tweets_final_predict,vocab_word_to_num,100)
 
+def getCountryDict(tweets, predictions):
+
+    worldMap = defaultdict(int)
+
+    for i in range(len(tweets)):
+        
+        if predictions[i][0] >= 0.5:
+            
+            dict = GeoText(tweets[i]).country_mentions
+            for country in dict.keys():
+                worldMap[country.lower()] += dict[country]
+    
+    return worldMap
+
+tweetsTokens, tweets = tokenized_tweets_predict, geotext_tweets_predict
+
+print('loading model...')
+model = keras.models.load_model('LSTM/data/model.h5')
+
+print('classifying tweets...')
+predictions = model.predict(tweetsTokens)
+
+print('extracting mentioned countries...')
+worldData = getCountryDict(tweets, predictions)
+
+print('plotting world map...')
+worldMap = pygal.maps.world.World()
+worldMap.add('Dengue Outbreak', worldData)
+
 try:
-    os.makedirs('../data/processed/')
+    os.makedirs('Frontend/static/map/')
 except FileExistsError:
     pass
 
-print('Saving...')
-np.save('../data/processed/tokenized_tweets_predict.npy', tokenized_tweets_predict)
-pkl.dump(geotext_tweets_predict,open('../data/processed/geotext_tweets_predict.pkl','wb'))
+worldMap.render_to_file('Frontend/static/map/map.svg')
+cairosvg.svg2svg(url='Frontend/static/map/map.svg', write_to='Frontend/static/map/map.svg')
+
+print('done')
