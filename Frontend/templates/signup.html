@@ -30,7 +30,7 @@
             <p class="heading">Signup Now!</p>
 
             <!-- signup form -->
-            <form action="home_page.html" method="POST" action="home_page.html" onsubmit="return validateForm(this)">
+            <form method="POST" action="/home" onsubmit="return validateForm(this)">
                 <p><input type="text" class="input-field" name="username" placeholder="Name" required onchange="validate(this, true)"></p>
                 <p><input type="email" class="input-field" name="email" placeholder="Email" required onchange="validate(this, true)"></p>
                 <p><input type="password" class="input-field" name="password1" placeholder="Password" required onchange="validate(this, true)"></p>
@@ -43,7 +43,7 @@
             <!-- Link to go to login page -->
             <div class="link-container">
                 <p>
-                    <a href="login.html">Already registered? Login now!</a>
+                    <a href="/login">Already registered? Login now!</a>
                 </p>
             </div>
 

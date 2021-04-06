@@ -27,7 +27,7 @@
             <p class="heading">Login Now!</p>
             
             <!-- form -->
-            <form action="home_page.html" method="POST" action="home_page.html" onsubmit="return validateForm(this)">
+            <form method="POST" action="/home" onsubmit="return validateForm(this)">
                 <p><input type="email" class="input-field" name="email" placeholder="Email" required onchange="validate(this, true)"></p>
                 <p><input type="password" class="input-field" name="password" placeholder="Password" required onchange="validate(this, true)"></p>
                 <p><input type="submit" class="button-blue" name="submit" value="Login"></p>
@@ -36,7 +36,7 @@
             <!-- Link to go to signup page -->
             <div class="link-container">
                 <p>
-                    <a href="signup.html">Not yet registered? Register Now!</a>
+                    <a href="/signup">Not yet registered? Register Now!</a>
                 </p>
             </div>
 

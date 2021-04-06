@@ -19,20 +19,20 @@
                 </div>
 
                 <div class="header-right1">
-                    <form action="login.html">
+                    <form action="/login">
                         <input type="submit" class="button-blue" value="Login">
                     </form>
                 </div>
 
                 <div class="header-right2">
-                    <form action="signup.html">
+                    <form action="/signup">
                         <input type="submit" class="button-blue" value="Signup">
                     </form>
                 </div>
             </div>
 
             <div class="header-div2">
-                <div class="menu-item" onclick="location.href = 'home_page.html'">
+                <div class="menu-item" onclick="location.href = '/home'">
                     HOME
                 </div>
 
@@ -46,7 +46,7 @@
             </div>
 
             <div class="header-div3">
-                DISEASE NAME
+                {{ disease_name }}
             </div>
 
         </header>
