@@ -87,7 +87,6 @@ except FileExistsError:
 
 #save the plot in svg format
 worldMap.render_to_file('Frontend/static/stats/map.svg')
-cairosvg.svg2svg(url='Frontend/static/stats/map.svg', write_to='Frontend/static/stats/map.svg')
 
 #plotting bar graph
 print("preparing bar graph...")
