@@ -90,20 +90,14 @@ worldMap.render_to_file('Frontend/static/stats/map.svg')
 
 #plotting bar graph
 print("preparing bar graph...")
-sorted_worldData=OrderedDict(sorted(worldData.items(), key=lambda x: x[1], reverse=True))
+sorted_worldData = sorted(worldData.items(), key=lambda x: x[1], reverse=True)
 
 bar_graph = pygal.Bar()
 bar_graph.title = "TOP 10 COUNTRIES WITH HIGHEST PREDICTED DENGUE OUTBREAK"
 
-idx=0
-colors=['red','blue','green','brown','yellow','orange','purple','pink','violet','black']
-
-for country_code in sorted_worldData.keys():
+for country_code, dengue_case in sorted_worldData[:10]:
     country_name = countries.get(country_code).name
-    bar_graph.add({'title':country_name,'color':colors[idx]}, [{'value':sorted_worldData[country_code], 'color':colors[idx]}])
-    idx+=1
-    if idx>9:
-        break
+    bar_graph.add(country_name, dengue_case)
 
 bar_graph.render_to_file('Frontend/static/stats/graph.svg')
 
