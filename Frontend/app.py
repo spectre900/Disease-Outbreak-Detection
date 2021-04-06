@@ -12,10 +12,8 @@ def root():
 def home():
     return render_template('home_page.html')
 
-@app.route('/login', methods = ['POST', 'GET'])
+@app.route('/login')
 def login():
-    if request.method == 'POST':
-        print('hello')
     return render_template('login.html')
 
 @app.route('/signup')
