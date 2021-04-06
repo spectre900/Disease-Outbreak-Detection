@@ -5,7 +5,8 @@ import pandas as pd
 import pickle as pkl
 import zipfile as unzip
 
-def getVocab(filename,d_model): # to generate word-num-vector mapping using pre trained word vectors
+# to generate word-num-vector mapping using pre trained word vectors
+def getVocab(filename,d_model): 
     
     file = open(filename,'r',encoding="utf8")
     
@@ -26,8 +27,8 @@ def getVocab(filename,d_model): # to generate word-num-vector mapping using pre 
     
     return vocab_word_to_num,vocab_num_to_vector
 
-
-def tokenize(reviews,vocab_word_to_num,max_len): # tokenizing the tweets
+# tokenizing the tweets
+def tokenize(reviews,vocab_word_to_num,max_len):
     
     tokenized_reviews = np.zeros((len(reviews),max_len),dtype='int')
     
@@ -72,59 +73,82 @@ def decontracted(phrase):
     
     return phrase
 
-#Unzip Word2Vec
-print('Unzipping Word2Vec...')
-unzip.ZipFile('../data/Word2Vec/glove6b50dtxt.zip', 'r').extractall('../data/Word2Vec')
+def cleanTweets(tweets):
+    
+    processed_tweets_final=[]
+    geotext_tweets_final=[]
+    for i in range(len(tweets)):
+        tweet=tweets[i]
+        words=tweet.split()
+        processed_words=[]
+        processed_words_geotext=[]
+        for j in range(len(words)):
+            if words[j][0]!='@' and words[j][0:4]!="http":
+                processed_words_geotext.append(words[j])
+                words[j]=words[j].lower()
+                processed_words.append(words[j])
+        geotext_tweet =' '.join(processed_words_geotext)
+        geotext_tweet=decontracted(geotext_tweet)
+        tweet=' '.join(processed_words)
+        tweet=decontracted(tweet)
+        geotext_tweets_final.append(geotext_tweet)
+        processed_tweets_final.append(tweet)
 
-#read CSV
-print('Reading CSV...')
-df = pd.read_csv('../../Scraper/data/data_annotated.csv')
+    return processed_tweets_final, geotext_tweets_final
 
-#generate vocab
-print('generating vocab...')
-vocab_word_to_num,vocab_num_to_vector = getVocab('../data/Word2Vec/glove.6B.50d.txt',50)
-tweets=df['content'].values
+def removeUnknowns(processed_tweets, vocab_word_to_num):
 
-#cleaning of tweets
-print('cleaning tweets...')
-processed_tweets=[]
-for i in range(len(tweets)):
-    tweet=tweets[i]
-    words=tweet.split()
-    processed_words=[]
-    for j in range(len(words)):
-        if words[j][0]!='@' and words[j][0:4]!="http":
-            words[j]=words[j].lower()
-            processed_words.append(words[j])
-    tweet=' '.join(processed_words)
-    tweet=decontracted(tweet)
-    processed_tweets.append(tweet)
+    processed_tweets_final=[]
+    for i in range(len(processed_tweets)):
+        tweet=processed_tweets[i]
+        words=tweet.split()
+        processed_words=[]
+        for word in words:
+            if word not in vocab_word_to_num.keys():
+                processed_words.append('ukn')
+            else:
+                processed_words.append(word)
+        tweet=' '.join(processed_words)
+        processed_tweets_final.append(tweet)
 
-#replacing unknown words
-print('replacing unknowns...')
-processed_tweets_final=[]
-for i in range(len(processed_tweets)):
-    tweet=processed_tweets[i]
-    words=tweet.split()
-    processed_words=[]
-    for word in words:
-        if word not in vocab_word_to_num.keys():
-            processed_words.append('ukn')
-        else:
-            processed_words.append(word)
-    tweet=' '.join(processed_words)
-    #print(tweet)
-    processed_tweets_final.append(tweet)
+    return processed_tweets_final
 
-#tokenizing tweets
-print('tokeninzing...')
-tokenized_tweets=tokenize(processed_tweets_final,vocab_word_to_num,100)
+def run():
+	
+    #Unzip Word2Vec
+    print('Unzipping Word2Vec...')
+    unzip.ZipFile('../data/Word2Vec/glove6b50dtxt.zip', 'r').extractall('../data/Word2Vec')
 
-try:
-    os.makedirs('../data/processed/')
-except FileExistsError:
-    pass
+    #read CSV
+    print('Reading CSV...')
+    df = pd.read_csv('../../Scraper/data/data_annotated.csv')
 
-print('Saving...')
-np.save('../data/processed/tokenized_tweets.npy', tokenized_tweets)
-pkl.dump(vocab_num_to_vector,open('../data/processed/num_to_vec.pkl','wb'))
+    #generate vocab
+    print('generating vocab...')
+    vocab_word_to_num,vocab_num_to_vector = getVocab('../data/Word2Vec/glove.6B.50d.txt',50)
+    tweets=df['content'].values
+
+    #cleaning of tweets
+    print('cleaning tweets...')
+    processed_tweets, _ = cleanTweets(tweets)
+
+    #replacing unknown words
+    print('replacing unknowns...')
+    processed_tweets_final=removeUnknowns(processed_tweets, vocab_word_to_num)
+
+    #tokenizing tweets
+    print('tokeninzing...')
+    tokenized_tweets=tokenize(processed_tweets_final,vocab_word_to_num,100)
+
+    try:
+        os.makedirs('../data/processed/')
+    except FileExistsError:
+        pass
+
+    print('Saving...')
+    np.save('../data/processed/tokenized_tweets.npy', tokenized_tweets)
+    pkl.dump(vocab_num_to_vector,open('../data/processed/num_to_vec.pkl','wb'))
+
+if __name__ == '__main__':
+
+    run()
