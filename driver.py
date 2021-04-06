@@ -14,7 +14,9 @@ import pickle as pkl
 import zipfile as unzip
 from geotext import GeoText
 from tensorflow import keras
+from iso3166 import countries
 from collections import defaultdict
+from collections import OrderedDict
 
 from Scraper import twitterScraper as ts
 
@@ -64,7 +66,7 @@ print('extracting mentioned countries...')
 worldData = defaultdict(int)
 
 #Get positive tweet indices
-index = np.array(np.where(predictions[:,0] >= 0.5)[0])
+index = np.array(np.where(predictions[:,0] >= 0.4)[0])
 
 #Iterate over those tweets and get countries
 for i in index:
@@ -79,12 +81,31 @@ worldMap.add('Dengue Outbreak', worldData)
 
 #make dir
 try:
-    os.makedirs('Frontend/static/map/')
+    os.makedirs('Frontend/static/stats/')
 except FileExistsError:
     pass
 
 #save the plot in svg format
-worldMap.render_to_file('Frontend/static/map/map.svg')
-cairosvg.svg2svg(url='Frontend/static/map/map.svg', write_to='Frontend/static/map/map.svg')
+worldMap.render_to_file('Frontend/static/stats/map.svg')
+cairosvg.svg2svg(url='Frontend/static/stats/map.svg', write_to='Frontend/static/stats/map.svg')
+
+#plotting bar graph
+print("preparing bar graph...")
+sorted_worldData=OrderedDict(sorted(worldData.items(), key=lambda x: x[1], reverse=True))
+
+bar_graph = pygal.Bar()
+bar_graph.title = "TOP 10 COUNTRIES WITH HIGHEST PREDICTED DENGUE OUTBREAK"
+
+idx=0
+colors=['red','blue','green','brown','yellow','orange','purple','pink','violet','black']
+
+for country_code in sorted_worldData.keys():
+    country_name = countries.get(country_code).name
+    bar_graph.add({'title':country_name,'color':colors[idx]}, [{'value':sorted_worldData[country_code], 'color':colors[idx]}])
+    idx+=1
+    if idx>9:
+        break
+
+bar_graph.render_to_file('Frontend/static/stats/graph.svg')
 
 print('done')

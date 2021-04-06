@@ -7,4 +7,5 @@ cssselect
 tinycss
 cairosvg
 lxml
+iso3166
 pygal_maps_world
