@@ -1,0 +1,110 @@
+body
+{
+    background-color: whitesmoke;
+    font-family: 'Lucida Grande', Tahoma, Verdana, sans-serif;
+    font-size: 16px;
+}
+
+.header-div1
+{
+    background-color: white;
+    padding: 20px;
+    overflow: hidden;
+}
+
+.header-left
+{
+    float: left;
+}
+
+.header-right1
+{
+    float: right;
+}
+
+.header-right2
+{
+    float: right;
+}
+
+.header-div2
+{
+    background-color: blue;
+    color: white;
+    font-size: 18px;
+}
+
+.menu-item
+{
+    display: inline-block;
+    width: 150px;
+    border-right: 2px white solid;
+    padding: 10px;
+    text-align: center;
+    
+}
+
+.menu-item:hover
+{
+    opacity: 0.8;
+    cursor: pointer;
+}
+
+.header-div3
+{
+    background-color: white;
+    font-size: 48px;
+    margin-bottom: 20px;
+    margin-top: 20px;
+    padding: 20px;
+    border-left: 8px black solid;
+}
+
+main
+{
+    margin-top: 20px;
+}
+
+.content
+{
+    width: 60%;
+    background-color: white;
+    margin: auto;
+    padding: 20px;
+}
+
+.heading
+{
+    border-left: 5px black solid;
+    padding-left: 10px;
+    font-size: 32px;
+}
+
+/* .content p
+{
+    text-align: justify;
+} */
+
+footer
+{
+    margin-top: 20px;
+    margin-bottom: 10px;
+    padding: 20px;
+    background-color: blue;
+    color: white;
+    text-align: center;
+}
+
+.subheading
+{
+    text-align: center;
+    font-size: 20px;
+    color: blue;
+}
+
+.value, .value ul li
+{
+    text-align: center;
+    font-size: 22px;
+
+}

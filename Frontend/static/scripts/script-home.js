@@ -37,9 +37,11 @@ function showSlide(num)
 
     slides[current_slide-1].style.display = "block";
     dots[current_slide-1].className += " active"
-
 }
 
 
 var current_slide = 1;
 showSlide(current_slide);
+setInterval(function(){
+    changeSlide(1);
+}, 3000);
