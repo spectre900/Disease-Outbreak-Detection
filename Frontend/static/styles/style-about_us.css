@@ -80,11 +80,6 @@ main
     font-size: 32px;
 }
 
-/* .content p
-{
-    text-align: justify;
-} */
-
 footer
 {
     margin-top: 20px;
@@ -95,16 +90,7 @@ footer
     text-align: center;
 }
 
-.subheading
+.detail, .detail ul li
 {
-    text-align: center;
-    font-size: 20px;
-    color: blue;
-}
-
-.value, .value ul li
-{
-    text-align: center;
     font-size: 22px;
-
 }
