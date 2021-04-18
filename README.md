@@ -20,6 +20,12 @@ j. requirements.txt		        --> Contains all the required libraries to run the 
 
 ## Instructions
 To run the project, follow these instructions:
+### Section 1 : Setup    
+a. Go to the folder 'LSTM/train' and execute 'preprocessing.py'.       
+
+b. In the same folder execute 'train.py' to train the LSTM model.     
+
+### Section 2 : Execution     
 
 a. Enter the project directory and execute the file 'driver.py':  
    python3 driver.py
