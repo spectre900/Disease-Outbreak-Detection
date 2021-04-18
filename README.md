@@ -7,7 +7,7 @@ Our project provides a novel approach to perform real-time monitoring of epidemi
 
 ## Project structure
 a. driver.py			            --> Driver file of the project.  
-b. Frontend/static   		      --> Contains all the assets required for the frontend.
+b. Frontend/static   		      --> Contains all the assets required for the frontend.    
 c. Frontend/templates		      --> Contains the required html files.  
 d. Frontend/app.py		        --> It is the controller which is created using flask.  
 e. LSTM/data			            --> Data reuired for LSTM training.  
