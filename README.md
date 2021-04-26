@@ -7,16 +7,16 @@ Our project provides a novel approach to perform real-time monitoring of epidemi
 
 ## Project structure
 
-a. driver.py			            --> Driver file of the project.  
-b. Frontend/static   		      --> Contains all the assets required for the frontend.  
-c. Frontend/templates		      --> Contains the required html files.  
-d. Frontend/app.py		         --> It is the controller which is created using flask.  
-e. LSTM/data			            --> Data reuired for LSTM training.  
-f. LSTM/train			            --> Contains required files to train LSTM model.  
-g. Scraper/data			         --> Contains scraped data from twitter.  
-h. Scraper/twitterScraper.py	   --> Custom twitter scraper.  
-i. Scraper/scrape.py		         --> Driver file which uses the custom twitter scraper to extract tweets.  
-j. requirements.txt		         --> Contains all the required libraries to run the project.
+a. driver.py			            --> Driver file of the project  
+b. Frontend/static   		      --> Contains all the assets required for the frontend  
+c. Frontend/templates		      --> Contains the required html files  
+d. Frontend/app.py		         --> It is the controller which is created using flask  
+e. LSTM/data			            --> Data reuired for LSTM training  
+f. LSTM/train			            --> Contains required files to train LSTM model  
+g. Scraper/data			         --> Contains scraped data from twitter  
+h. Scraper/twitterScraper.py	   --> Custom twitter scraper  
+i. Scraper/scrape.py		         --> Driver file which uses the custom twitter scraper to extract tweets  
+j. requirements.txt		         --> Contains all the required libraries to run the project
 
 ## Instructions
 
